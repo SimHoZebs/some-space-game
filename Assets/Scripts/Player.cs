@@ -13,27 +13,9 @@ public class Player : NetworkBehaviour
         base.OnStartClient();
     }
 
-    private void HandleMovement(){
-        if (isLocalPlayer){
-
-            var moveHorizontal = Input.GetAxis("Horizontal");
-            var moveVertical = Input.GetAxis("Vertical");
-
-            var movement= new Vector3(moveHorizontal, moveVertical, 0);
-
-            transform.position = transform.position + movement;
-        }
-
+    public void OnNameChange(string old, string newName){
+        Debug.Log($"Name changed to {newName}!");
     }
 
-    public void OnNameChange(string old, string newThing){
-        Debug.Log($"Name changed to {newThing}!");
-    }
-
-    
-
-    private void Update() {
-        HandleMovement();
-    }
 
 }
