@@ -10,10 +10,10 @@ public class MovementControl : NetworkBehaviour
     [SerializeField] float walkAccel, runAccel, runMaxSpeed, walkMaxSpeed = 3f;
 
     //object instancing
-    [SerializeField] private GameObject cam;
     private CharacterController charController;
     private InputHandler inputHandler;
 
+    [Client]
     void Start()
     {
         //caching gameObjs
@@ -21,12 +21,14 @@ public class MovementControl : NetworkBehaviour
         inputHandler = gameObject.GetComponentInChildren<InputHandler>();
     }
 
+    [Client]
     void FixedUpdate()
     {
+        if (!isLocalPlayer){ return;}
 
         //get cam's Vector3 converted from local Z & X axis to global.
-        var side = cam.transform.right;
-        var forward = cam.transform.forward;
+        var side = Camera.main.transform.right;
+        var forward = Camera.main.transform.forward;
         //lock their Y axis to 0 because we don't wanna be moving upwards
         forward.y = side.y = 0f;
 

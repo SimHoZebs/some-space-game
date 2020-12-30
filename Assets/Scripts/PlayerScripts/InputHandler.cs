@@ -16,13 +16,20 @@ public class InputHandler : NetworkBehaviour
     [SerializeField] private KeyCode interact = KeyCode.E;
     [SerializeField] private KeyCode interrupt = KeyCode.T;
     [SerializeField] private float interactRange = 3f;
-    [SerializeField] private Camera cam;
+    private Camera cam;
 
     public bool isMovingUp, isMovingDown, isMovingLeft, isMovingRight, isSprinting;
     public bool tryInteract, isHoldingInteract, isTryingInterrupt;
 
+    [Client]
+    private void Start() {
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+    }
+
     private void Update()
     {
+        if (!isLocalPlayer){return;}
+
         //movement set
         keyCheck(out isMovingUp, moveUp);
         keyCheck(out isMovingDown, moveDown);

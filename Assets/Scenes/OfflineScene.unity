@@ -961,7 +961,7 @@ MonoBehaviour:
   NoDelay: 1
   Interval: 10
   FastResend: 2
-  CongestionWindow: 0
+  CongestionWindow: 1
   SendWindowSize: 128
   ReceiveWindowSize: 128
   debugLog: 0
@@ -994,9 +994,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 862815112217529945, guid: f028f9199a8b43b40b0da972b04a3027, type: 3}
   autoCreatePlayer: 0
   playerSpawnMethod: 0
-  spawnPrefabs: []
-  playerName: 
-  cam: {fileID: 0}
+  spawnPrefabs:
+  - {fileID: 4091225820625310800, guid: f53bfb446219a57448534da4463cfb60, type: 3}
 --- !u!4 &537249230
 Transform:
   m_ObjectHideFlags: 0
@@ -1731,8 +1730,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 537249228}
-        m_TargetAssemblyTypeName: NetworkManagerExtended, Assembly-CSharp
-        m_MethodName: OnPressHostGame
+        m_TargetAssemblyTypeName: Mirror.NetworkManager, Mirror
+        m_MethodName: StartHost
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

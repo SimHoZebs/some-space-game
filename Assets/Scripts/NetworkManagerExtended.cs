@@ -5,31 +5,27 @@ using Mirror;
 
 public class NetworkManagerExtended : NetworkManager
 {
-    public string typedName;
 
+    private string typedName;
+
+    //NetworkMessage to send playerName data collected from here to the created local player
     public struct PlayerNameMessage: NetworkMessage{
         public string playerName;
     };
 
     //This is constantly updated at every change via Input Field in Unity.
     //It could be little more efficient to update it when the button is pressed instead.
-    public void SetPlayerName(string name){
-        typedName = name;
+    public void SetPlayerName(string _){
+        typedName = _;
     }
-    public void SetHostname(string hostName){
-        networkAddress = hostName;
+    public void SetNetworkAddress(string _){
+        networkAddress = _;
     }
 
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
         base.OnClientSceneChanged(conn);
         Debug.Log("Client Scnene Changed!");
-    }
-
-    public override void OnServerSceneChanged(string sceneName)
-    {
-        base.OnServerSceneChanged(sceneName);
-        Debug.Log("Server scene changed!");
     }
 
     public override void OnStartHost()
@@ -39,20 +35,16 @@ public class NetworkManagerExtended : NetworkManager
         NetworkServer.RegisterHandler<PlayerNameMessage>(AssignPlayerNameMessage);
     }
 
-    public override void OnServerAddPlayer(NetworkConnection conn)
-    {
-        Debug.Log("OnServerAddPlayer called");
-    }
-
     public override void OnClientConnect(NetworkConnection conn)
     {
         Debug.Log("OnClientConnect called");
         ClientScene.AddPlayer(conn);
 
-        conn.Send(new PlayerNameMessage {playerName = typedName});
+        conn.Send(new PlayerNameMessage {playerName = name});
     }
 
     private void AssignPlayerNameMessage(NetworkConnection connection, PlayerNameMessage playerNameMessage){
+        Debug.Log("AssignPlayerNameMessage");
         GameObject playerObj = Instantiate(playerPrefab);
 
         playerObj.GetComponent<Player>().playerName = playerNameMessage.playerName;
@@ -60,8 +52,14 @@ public class NetworkManagerExtended : NetworkManager
         NetworkServer.AddPlayerForConnection(connection, playerObj);
     }
 
-    public void OnPressHostGame(){
-        StartHost();
+    public override void OnServerSceneChanged(string sceneName)
+    {
+        Debug.Log("Server scene changed!");
+    }
+
+    public override void OnServerAddPlayer(NetworkConnection conn)
+    {
+        Debug.Log("OnServerAddPlayer called!");
     }
 
 }

@@ -5,13 +5,9 @@ using Mirror;
 
 public class Player : NetworkBehaviour
 {
-    [SyncVar (hook = nameof(OnNameChange))]
+    //Syncs with the change NetworkManager makes.
+    [SyncVar (hook = nameof(OnNameChange))] [SerializeField]
     public string playerName;
-
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-    }
 
     public void OnNameChange(string old, string newName){
         Debug.Log($"Name changed to {newName}!");

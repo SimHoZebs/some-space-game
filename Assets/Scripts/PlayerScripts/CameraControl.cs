@@ -5,13 +5,12 @@ using Mirror;
 
 public class CameraControl : NetworkBehaviour
 {
-    [SerializeField] private Camera cam;
 
     [Header("Head-Follow Mode")]
     [SerializeField] private int headFollowModeId = 0;
     [SerializeField] private Vector3 headFollowModeCamOffset = new Vector3(0f, 1.6f, 0f);
     [SerializeField] private float camSensitivity = 2.0f;
-    [SerializeField] private Transform playerTransform;
+    //[SerializeField] private Transform playerTransform;
 
     [Header("Interaction Mode")]
     [SerializeField] private int taskModeId = 1;
@@ -24,7 +23,9 @@ public class CameraControl : NetworkBehaviour
     [SerializeField] private float xAxis, yAxis = 0.0f;
     [SerializeField] private int currCamMode = 0;
 
+    [Client]
     private void Update(){
+        if (!isLocalPlayer){ return;}
 
         if (currCamMode == headFollowModeId){
             HeadFollowMode();
@@ -34,6 +35,7 @@ public class CameraControl : NetworkBehaviour
         }
     }
 
+    [Client]
     public void ChangeCamMode(GameObject taskObj){
 
         if (taskObj == null){
@@ -48,23 +50,24 @@ public class CameraControl : NetworkBehaviour
         }
     }
 
+    [Client]
     private void HeadFollowMode(){
-
+        if (!isLocalPlayer){ return;}
         //Have same position as the attachTarget with an offset
-        cam.transform.position = playerTransform.position + headFollowModeCamOffset;
+        Camera.main.transform.position = transform.position + headFollowModeCamOffset;
 
         //get mouse coords
         xAxis += camSensitivity * Input.GetAxis("Mouse X");
         yAxis -= camSensitivity * Input.GetAxis("Mouse Y");
 
         //convert mouse coords to eulerAngles 
-        cam.transform.eulerAngles = new Vector3(yAxis, xAxis, 0.0f);
+        Camera.main.transform.eulerAngles = new Vector3(yAxis, xAxis, 0.0f);
 
         //same I too don't know wtf Euler Angles are but it works
         //Thanks StackOverflow
     }
 
     private void TaskMode(GameObject taskObj){
-        cam.transform.position = taskObj.transform.position + taskModeCamOffset;
+        Camera.main.transform.position = taskObj.transform.position + taskModeCamOffset;
     }
 }
