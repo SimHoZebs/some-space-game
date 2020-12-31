@@ -206,10 +206,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  moveUp: 119
-  moveDown: 115
-  moveLeft: 97
-  moveRight: 100
   sprint: 304
   interact: 101
   interrupt: 116
