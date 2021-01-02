@@ -1121,14 +1121,9 @@ namespace Mirror
         /// <param name="ownerConnection">The connection that has authority over the object</param>
         public static void Spawn(GameObject obj, NetworkConnection ownerConnection = null)
         {
-            Debug.Log("Spawn intiated");
             if (VerifyCanSpawn(obj))
             {
-                Debug.Log($"{obj.name} Spawned");
                 SpawnObject(obj, ownerConnection);
-            }
-            else{
-                Debug.Log("Can not spawn");
             }
         }
 

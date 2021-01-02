@@ -33,8 +33,10 @@ public class MovementControl : NetworkBehaviour
         //Basic WASD movement using vector arithmetic
         var targetVel = (forward * Input.GetAxis("Vertical") + side * Input.GetAxis("Horizontal"))* Time.deltaTime;
 
+        var verticalSpeed = new Vector3((walkSpeed + sprintAccel * Input.GetAxis("Sprint"))*Input.GetAxis("Horizontal"), 0, (walkSpeed + sprintAccel * Input.GetAxis("Sprint"))*Input.GetAxis("Vertical"));
         //Normalize vector size and multiply to target accel for constant vel
-        charController.SimpleMove(Vector3.Normalize(targetVel) * (walkSpeed + sprintAccel * Input.GetAxis("Sprint")) );
+        //charController.SimpleMove(Vector3.Normalize(targetVel) * (walkSpeed + sprintAccel * Input.GetAxis("Sprint")) );
+        charController.SimpleMove(verticalSpeed);
     }
 
 }

@@ -13,5 +13,4 @@ public class Player : NetworkBehaviour
         Debug.Log($"Name changed to {newName}!");
     }
 
-
 }

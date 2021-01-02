@@ -6,7 +6,19 @@ using Mirror;
 public class NetworkManagerExtended : NetworkManager
 {
 
+    [SerializeField] private bool debugMode = false;
+    [SerializeField] private Transform spawnPoint;
     private string typedName;
+
+    public override void Start()
+    {
+        base.Start();
+
+        if (debugMode){
+            typedName = "DebugMode";
+            StartHost();
+        }
+    }
 
     //NetworkMessage to send playerName data collected from here to the created local player
     public struct PlayerNameMessage: NetworkMessage{
@@ -40,7 +52,7 @@ public class NetworkManagerExtended : NetworkManager
         Debug.Log("OnClientConnect called");
         ClientScene.AddPlayer(conn);
 
-        conn.Send(new PlayerNameMessage {playerName = name});
+        conn.Send(new PlayerNameMessage {playerName = typedName});
     }
 
     private void AssignPlayerNameMessage(NetworkConnection connection, PlayerNameMessage playerNameMessage){
