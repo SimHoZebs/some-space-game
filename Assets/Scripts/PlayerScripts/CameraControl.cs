@@ -9,9 +9,10 @@ public class CameraControl : NetworkBehaviour
     [SerializeField] private Vector3 topDownViewOffset = new Vector3(0f, 10f, -5f);
 
     [Header("Object Translucency")]
-    [SerializeField] private float transparencyLevel = 0.3f;
-    private Material prevHitObjMat;
-    private Color prevHitObjColor, newObjColor;
+    [SerializeField] private Vector3 raycastOffset = new Vector3(0, 0.5f, 0);
+    [SerializeField] private float colorAlphaLevel = 0.2f;
+    [SerializeField] private Material prevHitObjMat;
+    [SerializeField] private Color prevHitObjColor, newObjColor;
 
     //Visualization purpose
     [Header("Debugging data")]
@@ -23,6 +24,7 @@ public class CameraControl : NetworkBehaviour
 
         ObjectTransparency();
         TopDownView();
+
     }
 
     [Client]
@@ -36,22 +38,24 @@ public class CameraControl : NetworkBehaviour
         if (!isLocalPlayer){ return;}
         RaycastHit hit;
         var mainCamPos = Camera.main.transform.position;
+        Vector3 rayDirection = -mainCamPos + transform.position + raycastOffset;
 
         //Drawing the raycast in scene view
-        Debug.DrawRay(mainCamPos, -mainCamPos + transform.position , Color.green);
+        Debug.DrawRay(mainCamPos, rayDirection, Color.green);
 
-        bool rayHit = Physics.Raycast(mainCamPos, - mainCamPos + transform.position, out hit);
+        bool rayHit = Physics.Raycast(mainCamPos, rayDirection, out hit);
 
         if (!hit.transform.CompareTag("Player")){
             prevHitObjMat = hit.transform.gameObject.GetComponent<MeshRenderer>().material;
 
-            if (prevHitObjMat.color.a == transparencyLevel){ return;}
+            if (prevHitObjMat.color.a == colorAlphaLevel){ return;}
 
             newObjColor = prevHitObjColor = prevHitObjMat.color;
-            newObjColor.a = transparencyLevel;
+            newObjColor.a = colorAlphaLevel;
             prevHitObjMat.color = newObjColor;
         }
         else if(prevHitObjMat != null){
+            Debug.Log("reverting color");
             prevHitObjMat.color = prevHitObjColor;
             prevHitObjMat = null;
         }
