@@ -1211,10 +1211,10 @@ GameObject:
   - component: {fileID: -8243710277439595507}
   - component: {fileID: 5122530703927527611}
   - component: {fileID: -2242306331205286073}
-  - component: {fileID: 4100938787213687061}
+  - component: {fileID: 9033156614380535572}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1247,13 +1247,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 1.8
+  m_Radius: 0.25
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0.05}
 --- !u!114 &-902762668910946826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1316,7 +1316,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   topDownViewOffset: {x: 0, y: 10, z: -5}
-  playerNearWall: 0
+  isTransparent: 0
   xAxis: 0
   yAxis: 0
 --- !u!95 &-2242306331205286073
@@ -1338,7 +1338,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!65 &4100938787213687061
+--- !u!65 &9033156614380535572
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1346,11 +1346,11 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4717873633844076083}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 2, y: 1, z: 2}
-  m_Center: {x: 0, y: 0, z: 1}
+  m_Center: {x: 0, y: 1, z: -1.25}
 --- !u!1 &4809044367804530024
 GameObject:
   m_ObjectHideFlags: 0
