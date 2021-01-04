@@ -5,18 +5,27 @@ using Mirror;
 
 public class CameraControl : NetworkBehaviour
 {
+    [Header("Top down view settings")]
     [SerializeField] private Vector3 topDownViewOffset = new Vector3(0f, 10f, -5f);
+
+    [Header("Object Translucency")]
+    [SerializeField] private Vector3 raycastOffset = new Vector3(0, 0.5f, 0);
+    [SerializeField] private float colorAlphaLevel = 0.2f;
+    [SerializeField] private Material prevHitObjMat;
+    [SerializeField] private Color prevHitObjColor, newObjColor;
 
     //Visualization purpose
     [Header("Debugging data")]
-    [SerializeField] private bool isTransparent = false;
     [SerializeField] private float xAxis, yAxis = 0.0f;
 
     [Client]
     private void Update(){
         if (!isLocalPlayer){ return;}
 
+        ObjectTransparency();
+        CastRayToCursor();
         TopDownView();
+
     }
 
     [Client]
@@ -26,16 +35,53 @@ public class CameraControl : NetworkBehaviour
     }
 
     [Client]
-    private void OnCollisionEnter(Collision other) {
-        if (other.gameObject.CompareTag("Wall")){
-            other.gameObject.GetComponent<MeshRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+    private void ObjectTransparency(){
+        if (!isLocalPlayer){ return;}
+        RaycastHit hit;
+        var mainCamPos = Camera.main.transform.position;
+        Vector3 rayDirection = -mainCamPos + transform.position + raycastOffset;
+
+        //Drawing the raycast in scene view
+        Debug.DrawRay(mainCamPos, rayDirection, Color.green);
+
+        bool rayHit = Physics.Raycast(mainCamPos, rayDirection, out hit);
+
+        if (!hit.transform.CompareTag("Player")){
+            prevHitObjMat = hit.transform.gameObject.GetComponent<MeshRenderer>().material;
+
+            if (prevHitObjMat.color.a == colorAlphaLevel){ return;}
+
+            newObjColor = prevHitObjColor = prevHitObjMat.color;
+            newObjColor.a = colorAlphaLevel;
+            prevHitObjMat.color = newObjColor;
+        }
+        else if(prevHitObjMat != null){
+            Debug.Log("reverting color");
+            prevHitObjMat.color = prevHitObjColor;
+            prevHitObjMat = null;
         }
     }
 
-    private void OnCollisionExit(Collision other) {
-        if (other.gameObject.CompareTag("Wall")){
-            other.gameObject.GetComponent<MeshRenderer>().material.color = new Color(1.0f, 1.0f, 1.0f, 1f);
-        }
+    [Client]
+    private void CastRayToCursor(){
+
+        if (!isLocalPlayer){ return;}
+
+        Vector3 cursorPos = Input.mousePosition;
+
+        float cursorPosX = Input.mousePosition.x - Screen.width/2f;
+        float cursorPosY = Input.mousePosition.y - Screen.height/2f;
+
+        var lookAtX = transform.position.x + cursorPosX;
+        var lookAtZ = transform.position.z + cursorPosY;
+
+        var rayOrigin = transform.position + new Vector3 (0, 1.6f, 0);
+        var direction = new Vector3 (lookAtX, 1.6f, lookAtZ);
+
+        RaycastHit hit;
+
+        Debug.DrawRay(rayOrigin, direction, Color.red);
+        Physics.Raycast(rayOrigin, direction, out hit);
     }
 
 }
