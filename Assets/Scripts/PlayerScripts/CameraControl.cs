@@ -23,6 +23,7 @@ public class CameraControl : NetworkBehaviour
         if (!isLocalPlayer){ return;}
 
         ObjectTransparency();
+        CastRayToCursor();
         TopDownView();
 
     }
@@ -59,6 +60,28 @@ public class CameraControl : NetworkBehaviour
             prevHitObjMat.color = prevHitObjColor;
             prevHitObjMat = null;
         }
+    }
+
+    [Client]
+    private void CastRayToCursor(){
+
+        if (!isLocalPlayer){ return;}
+
+        Vector3 cursorPos = Input.mousePosition;
+
+        float cursorPosX = Input.mousePosition.x - Screen.width/2f;
+        float cursorPosY = Input.mousePosition.y - Screen.height/2f;
+
+        var lookAtX = transform.position.x + cursorPosX;
+        var lookAtZ = transform.position.z + cursorPosY;
+
+        var rayOrigin = transform.position + new Vector3 (0, 1.6f, 0);
+        var direction = new Vector3 (lookAtX, 1.6f, lookAtZ);
+
+        RaycastHit hit;
+
+        Debug.DrawRay(rayOrigin, direction, Color.red);
+        Physics.Raycast(rayOrigin, direction, out hit);
     }
 
 }
