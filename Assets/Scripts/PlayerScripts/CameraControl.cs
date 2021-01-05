@@ -2,86 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Cinemachine;
 
 public class CameraControl : NetworkBehaviour
 {
-    [Header("Top down view settings")]
-    [SerializeField] private Vector3 topDownViewOffset = new Vector3(0f, 10f, -5f);
-
-    [Header("Object Translucency")]
-    [SerializeField] private Vector3 raycastOffset = new Vector3(0, 0.5f, 0);
-    [SerializeField] private float colorAlphaLevel = 0.2f;
-    [SerializeField] private Material prevHitObjMat;
-    [SerializeField] private Color prevHitObjColor, newObjColor;
+    private CinemachineFreeLook freeCam;
 
     //Visualization purpose
     [Header("Debugging data")]
     [SerializeField] private float xAxis, yAxis = 0.0f;
 
     [Client]
-    private void Update(){
+    private void Start() {
         if (!isLocalPlayer){ return;}
+        freeCam = GameObject.FindGameObjectWithTag("Vcam").GetComponent<CinemachineFreeLook>();
 
-        ObjectTransparency();
-        CastRayToCursor();
-        TopDownView();
-
+        freeCam.Follow = transform;
+        freeCam.LookAt = transform;
     }
-
-    [Client]
-    private void TopDownView(){
-        if (!isLocalPlayer){ return;}
-        Camera.main.transform.position = transform.position + topDownViewOffset;
-    }
-
-    [Client]
-    private void ObjectTransparency(){
-        if (!isLocalPlayer){ return;}
-        RaycastHit hit;
-        var mainCamPos = Camera.main.transform.position;
-        Vector3 rayDirection = -mainCamPos + transform.position + raycastOffset;
-
-        //Drawing the raycast in scene view
-        Debug.DrawRay(mainCamPos, rayDirection, Color.green);
-
-        bool rayHit = Physics.Raycast(mainCamPos, rayDirection, out hit);
-
-        if (!hit.transform.CompareTag("Player")){
-            prevHitObjMat = hit.transform.gameObject.GetComponent<MeshRenderer>().material;
-
-            if (prevHitObjMat.color.a == colorAlphaLevel){ return;}
-
-            newObjColor = prevHitObjColor = prevHitObjMat.color;
-            newObjColor.a = colorAlphaLevel;
-            prevHitObjMat.color = newObjColor;
-        }
-        else if(prevHitObjMat != null){
-            Debug.Log("reverting color");
-            prevHitObjMat.color = prevHitObjColor;
-            prevHitObjMat = null;
-        }
-    }
-
-    [Client]
-    private void CastRayToCursor(){
-
-        if (!isLocalPlayer){ return;}
-
-        Vector3 cursorPos = Input.mousePosition;
-
-        float cursorPosX = Input.mousePosition.x - Screen.width/2f;
-        float cursorPosY = Input.mousePosition.y - Screen.height/2f;
-
-        var lookAtX = transform.position.x + cursorPosX;
-        var lookAtZ = transform.position.z + cursorPosY;
-
-        var rayOrigin = transform.position + new Vector3 (0, 1.6f, 0);
-        var direction = new Vector3 (lookAtX, 1.6f, lookAtZ);
-
-        RaycastHit hit;
-
-        Debug.DrawRay(rayOrigin, direction, Color.red);
-        Physics.Raycast(rayOrigin, direction, out hit);
-    }
-
 }
