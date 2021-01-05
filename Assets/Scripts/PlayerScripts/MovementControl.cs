@@ -25,18 +25,16 @@ public class MovementControl : NetworkBehaviour
         if (!isLocalPlayer){ return;}
 
         //get cam's Vector3 converted from local Z & X axis to global.
-        var side = Camera.main.transform.right;
-        var forward = Camera.main.transform.forward;
+        var camSide = Camera.main.transform.right;
+        var camForward = Camera.main.transform.forward;
         //lock their Y axis to 0 because we don't wanna be moving upwards
-        forward.y = side.y = 0f;
+        camForward.y = camSide.y = 0f;
 
         //Basic WASD movement using vector arithmetic
-        var targetVel = (forward * Input.GetAxis("Vertical") + side * Input.GetAxis("Horizontal"))* Time.deltaTime;
+        var targetVel = (camForward * Input.GetAxis("Vertical") + camSide * Input.GetAxis("Horizontal"))* Time.deltaTime;
 
-        var verticalSpeed = new Vector3((walkSpeed + sprintAccel * Input.GetAxis("Sprint"))*Input.GetAxis("Horizontal"), 0, (walkSpeed + sprintAccel * Input.GetAxis("Sprint"))*Input.GetAxis("Vertical"));
         //Normalize vector size and multiply to target accel for constant vel
-        //charController.SimpleMove(Vector3.Normalize(targetVel) * (walkSpeed + sprintAccel * Input.GetAxis("Sprint")) );
-        charController.SimpleMove(verticalSpeed);
+        charController.SimpleMove(Vector3.Normalize(targetVel) * (walkSpeed + sprintAccel * Input.GetAxis("Sprint")) );
     }
 
 }
