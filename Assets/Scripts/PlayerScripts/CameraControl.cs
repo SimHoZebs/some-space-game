@@ -8,10 +8,6 @@ public class CameraControl : NetworkBehaviour
 {
     private CinemachineFreeLook freeCam;
 
-    //Visualization purpose
-    [Header("Debugging data")]
-    [SerializeField] private float xAxis, yAxis = 0.0f;
-
     [Client]
     private void Start() {
         if (!isLocalPlayer){ return;}

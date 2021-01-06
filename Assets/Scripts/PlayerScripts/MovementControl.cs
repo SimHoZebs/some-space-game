@@ -6,8 +6,13 @@ using Mirror;
 public class MovementControl : NetworkBehaviour
 {
 
-    //Speed Control
-    [SerializeField] float walkSpeed, sprintAccel = 3f;
+    [Header("Speed control")]
+    [SerializeField] float walkSpeed = 4f;
+    [SerializeField] float sprintAccel = 3f;
+
+    [Header("Player orientation")]
+    [SerializeField] float playerViewHeight = 0f; 
+    [SerializeField] float screenOffset = 0.1f;
 
     //object instancing
     private CharacterController charController;
@@ -15,6 +20,7 @@ public class MovementControl : NetworkBehaviour
     [Client]
     void Start()
     {
+        if (!isLocalPlayer){ return;}
         //caching gameObjs
         charController = gameObject.GetComponent<CharacterController>();
     }
@@ -23,6 +29,8 @@ public class MovementControl : NetworkBehaviour
     void FixedUpdate()
     {
         if (!isLocalPlayer){ return;}
+
+        FaceProperDirection();
 
         //get cam's Vector3 converted from local Z & X axis to global.
         var camSide = Camera.main.transform.right;
@@ -35,6 +43,17 @@ public class MovementControl : NetworkBehaviour
 
         //Normalize vector size and multiply to target accel for constant vel
         charController.SimpleMove(Vector3.Normalize(targetVel) * (walkSpeed + sprintAccel * Input.GetAxis("Sprint")) );
+    }
+
+    [Client]
+    private void FaceProperDirection(){
+        if (!isLocalPlayer){ return;}
+
+        var camRotation = Camera.main.transform.eulerAngles;
+
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, camRotation.y, transform.eulerAngles.z);
+
+
     }
 
 }
