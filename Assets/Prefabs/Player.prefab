@@ -1210,6 +1210,7 @@ GameObject:
   - component: {fileID: -8402818184116091588}
   - component: {fileID: -8243710277439595507}
   - component: {fileID: 5122530703927527611}
+  - component: {fileID: 3884715986228563024}
   - component: {fileID: -2242306331205286073}
   m_Layer: 7
   m_Name: Player
@@ -1284,7 +1285,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   walkSpeed: 4
-  sprintAccel: 3
+  sprintBoost: 3
+  crouchSlow: 2
+  lookAtAngleOffset: 10
 --- !u!114 &-8243710277439595507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1314,14 +1317,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  topDownViewOffset: {x: 0, y: 10, z: -5}
-  raycastOffset: {x: 0, y: 0.5, z: 0}
-  colorAlphaLevel: 0.2
-  prevHitObjMat: {fileID: 0}
-  prevHitObjColor: {r: 0, g: 0, b: 0, a: 0}
-  newObjColor: {r: 0, g: 0, b: 0, a: 0}
-  xAxis: 0
-  yAxis: 0
+--- !u!114 &3884715986228563024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4717873633844076083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04a6cfb0ca7a1a048b640b91df75975e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  animationTransition: 0.1
 --- !u!95 &-2242306331205286073
 Animator:
   serializedVersion: 3
