@@ -5,9 +5,16 @@ using Mirror;
 
 public class MovementControl : NetworkBehaviour
 {
+    //Controls movement and rotation of player model.
 
-    //Speed Control
-    [SerializeField] float walkSpeed, sprintAccel = 3f;
+    [Header("Speed control")]
+    [SerializeField] public float walkSpeed = 4f;
+    [SerializeField] public float accel = 2f;
+    [SerializeField] public float crouchSlow = 2f;
+
+    [Header("Player orientation")]
+    [Tooltip("Player faces at a point coming from the screen. This slightly ofsets the angle the player looks at to reduce curving while moving.")]
+    [SerializeField] private float lookAtAngleOffset = 10f;
 
     //object instancing
     private CharacterController charController;
@@ -15,26 +22,48 @@ public class MovementControl : NetworkBehaviour
     [Client]
     void Start()
     {
+        if (!isLocalPlayer){ return;}
         //caching gameObjs
         charController = gameObject.GetComponent<CharacterController>();
     }
 
     [Client]
-    void FixedUpdate()
+    void Update()
     {
         if (!isLocalPlayer){ return;}
-
-        //get cam's Vector3 converted from local Z & X axis to global.
-        var camSide = Camera.main.transform.right;
-        var camForward = Camera.main.transform.forward;
-        //lock their Y axis to 0 because we don't wanna be moving upwards
-        camForward.y = camSide.y = 0f;
-
-        //Basic WASD movement using vector arithmetic
-        var targetVel = (camForward * Input.GetAxis("Vertical") + camSide * Input.GetAxis("Horizontal"))* Time.deltaTime;
-
-        //Normalize vector size and multiply to target accel for constant vel
-        charController.SimpleMove(Vector3.Normalize(targetVel) * (walkSpeed + sprintAccel * Input.GetAxis("Sprint")) );
+        CorrectModelRotation();
+        Move();
     }
 
+    [Client]
+    private void CorrectModelRotation(){
+
+        Vector3 faceRotation = transform.eulerAngles;
+        Vector3 camRotation = Camera.main.transform.eulerAngles;
+
+        faceRotation.y = Input.GetButton("Vertical") || Input.GetButton("Horizontal")
+            ? camRotation.y - lookAtAngleOffset 
+            : faceRotation.y;
+
+        transform.eulerAngles = faceRotation;
+
+    }
+
+    [Client]
+    private void Move(){
+
+        //left-right movement is based on camera's relative x axis.
+        var relativeSide = Camera.main.transform.right * Input.GetAxis("Horizontal") * Time.deltaTime;
+
+        //forward-back movement is based on player mode's relative z axis.
+        var relativeForward = transform.forward * Input.GetAxis("Vertical") * Time.deltaTime;
+
+        //lock their Y axis to 0 because we don't wanna be moving upwards
+        relativeForward.y = relativeSide.y = 0f;
+
+        var normalizedMoveVector = Vector3.Normalize(relativeSide + relativeForward);
+        var finalMoveVector = normalizedMoveVector * (walkSpeed + accel * Input.GetAxis("Accel"));
+
+        charController.SimpleMove(finalMoveVector);
+    }
 }
